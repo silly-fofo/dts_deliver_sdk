@@ -30,7 +30,7 @@ definitions:
           - TRACE
           - CONTROL
       log:
-        description: "log message: any kind of logging you want the platform to know about."
+        description: "log type message: any kind of logging you want the platform to know about."
         "$ref": "#/definitions/DtsLogMessage"
       spec:
         "$ref": "#/definitions/ConnectorSpecification"
@@ -41,8 +41,9 @@ definitions:
         description: "catalog message: the catalog"
         "$ref": "#/definitions/DtsCatalog"
       record:
-        description: "record message: the record"
-        "$ref": "#/definitions/DtsRecordMessage"
+        description: "record type message: the record"
+        type: object
+        existingJavaType: com.aliyun.dts.deliver.protocol.record.Record
       state:
         description: "schema message: the state. Must be the last message produced. The platform uses this information"
         "$ref": "#/definitions/DtsStateMessage"
@@ -55,32 +56,11 @@ definitions:
       group_key:
         description: "how the data be grouped, when sink to target, such as hash(db_name + tab_name)."
         type: object
-        javaType: java.lang.Long
+        existingJavaType: java.lang.Long
       size:
         description: "message size"
         type: object
-        javaType: java.lang.Long
-  DtsRecordMessage:
-    type: object
-    additionalProperties: true
-    required:
-      - stream
-      - data
-      - emitted_at
-    properties:
-      namespace:
-        description: "namespace the data is associated with"
-        type: string
-      stream:
-        description: "stream the data is associated with"
-        type: string
-      data:
-        description: "record data"
-        type: object
-        existingJavaType: com.aliyun.dts.deliver.protocol.record.Record
-      emitted_at:
-        description: "when the data was emitted from the source. epoch in millisecond."
-        type: integer
+        existingJavaType: java.lang.Long
   DtsStateMessage:
     type: object
     additionalProperties: true

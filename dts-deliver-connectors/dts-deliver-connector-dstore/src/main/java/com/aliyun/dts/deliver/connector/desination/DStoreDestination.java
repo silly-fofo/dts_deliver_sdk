@@ -37,10 +37,8 @@ public class DStoreDestination extends BaseConnector implements Destination {
         );
 
         Pair<String, String> userPassword = dtsOpenApi.getUserPassword();
-        String dbList = dtsOpenApi.getDblist();
 
-
-        return new DStoreRecordConsumer(DStoreDestinationConfig.getDStoreDestinationConfig(settings, userPassword, dbList), checkpointHandler);
+        return new DStoreRecordConsumer(DStoreDestinationConfig.getDStoreDestinationConfig(settings, userPassword), checkpointHandler);
     }
 
     @Override

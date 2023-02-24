@@ -37,18 +37,14 @@ public class SourceTask extends Task {
 
     private final DtsMessagePipeline sourcePipeline;
     private final Settings settings;
-
-    private int groupKey;
-
     public SourceTask(Settings settings, Source source, AbstractRecordStoreWithMetrics recordStore,
-                      DtsMessagePipeline sourcePipeline, int groupKey) {
+                      DtsMessagePipeline sourcePipeline) {
         super(BASE_TASK_NAME, SOURCE_TASK_ID_GENERATOR.incrementAndGet());
 
         this.settings = settings;
         this.source = source;
         this.recordStore = recordStore;
         this.sourcePipeline = sourcePipeline;
-        this.groupKey = groupKey;
     }
 
     public static synchronized void setRpsThrottle(double maxQps) {

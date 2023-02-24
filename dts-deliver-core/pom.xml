@@ -5,7 +5,8 @@
     <parent>
         <artifactId>dts-deliver-sdk</artifactId>
         <groupId>com.aliyun.dts.deliver</groupId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
@@ -15,7 +16,6 @@
         <dependency>
             <groupId>com.aliyun.dts.deliver</groupId>
             <artifactId>dts-deliver-common</artifactId>
-            <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>

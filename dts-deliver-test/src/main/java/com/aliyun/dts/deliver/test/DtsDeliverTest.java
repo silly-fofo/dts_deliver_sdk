@@ -5,10 +5,11 @@ import com.aliyun.dts.deliver.base.Source;
 import com.aliyun.dts.deliver.commons.config.GlobalSettings;
 import com.aliyun.dts.deliver.commons.config.JobConfig;
 import com.aliyun.dts.deliver.connector.desination.DStoreDestination;
-import com.aliyun.dts.deliver.connector.desination.DStoreDestinationConfig;
 import com.aliyun.dts.deliver.core.bootstrap.DtsDeliver;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class DtsDeliverTest {
@@ -27,11 +28,20 @@ public class DtsDeliverTest {
 
         JobConfig jobConfig = new JobConfig(configPath, settingValueMap);
 
-        Source source = new FakeSource();
+        //source
+
+
+        List<Source> sourceList = new ArrayList<>();
+        Source source1 = new FakeSource("source 1", jobConfig.getSettings());
+        Source source2 = new FakeSource("source 2", jobConfig.getSettings());
+        Source source3 = new FakeSource("source 3", jobConfig.getSettings());
+        sourceList.add(source1);
+        sourceList.add(source2);
+        sourceList.add(source3);
 
         Destination destination = new DStoreDestination();
 
-        DtsDeliver dtsDeliver = new DtsDeliver(jobConfig, source, destination);
+        DtsDeliver dtsDeliver = new DtsDeliver(jobConfig, sourceList, destination);
 
         dtsDeliver.startup();
     }

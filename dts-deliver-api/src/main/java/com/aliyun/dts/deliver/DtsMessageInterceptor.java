@@ -10,7 +10,7 @@ public interface DtsMessageInterceptor {
 
     String name();
 
-    void initialize(Settings settings, Metrics metrics);
+    void initialize(Settings settings);
 
     DtsMessage intercept(DtsMessage record);
 

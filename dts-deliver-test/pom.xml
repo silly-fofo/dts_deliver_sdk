@@ -18,8 +18,10 @@
         <dependency>
             <groupId>com.aliyun.dts.deliver</groupId>
             <artifactId>dts-deliver-connector-dstore</artifactId>
-            <version>1.0.0</version>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun.dts.deliver</groupId>
+            <artifactId>dts-deliver-filter</artifactId>
         </dependency>
     </dependencies>
 

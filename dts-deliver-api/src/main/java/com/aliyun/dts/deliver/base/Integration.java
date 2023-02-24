@@ -4,6 +4,7 @@ import com.aliyun.dts.deliver.DtsMessageInterceptor;
 import com.aliyun.dts.deliver.protocol.generated.ConnectorSpecification;
 import com.aliyun.dts.deliver.protocol.generated.DtsConnectionStatus;
 import com.fasterxml.jackson.databind.JsonNode;
+import org.apache.kafka.common.metrics.Metrics;
 
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +44,7 @@ public interface Integration {
      * that should be inserted after record store.
      * @return record filters
      */
-    default List<DtsMessageInterceptor> recordInterceptors() {
+    default List<DtsMessageInterceptor> recordInterceptors(Metrics metrics) {
         return Collections.emptyList();
     }
 }

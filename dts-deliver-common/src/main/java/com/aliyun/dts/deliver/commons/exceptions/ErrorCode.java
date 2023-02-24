@@ -38,4 +38,9 @@ public interface ErrorCode {
      * 不支持的操作，如不支持某些数据类型,10020
      */
     int COMMON_LIB_UNSUPPORTED_OPERATION = 11005;
+
+    /**
+     * 不支持的record type
+     */
+    int CAPTURE_UNSUPPORTED_RECORD_TYPE = 50005;
 }

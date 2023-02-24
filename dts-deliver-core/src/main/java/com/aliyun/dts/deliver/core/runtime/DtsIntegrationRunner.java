@@ -31,8 +31,6 @@ public class DtsIntegrationRunner {
 
     private final TaskSubmitter taskSubmitter;
 
-    private TaskManager<SourceTask> sourceTaskManager;
-    private TaskManager<SinkTask> sinkTaskManager;
     private AbstractRecordStoreWithMetrics recordStore;
 
     private AtomicReference<Throwable> errorRef;
@@ -40,20 +38,18 @@ public class DtsIntegrationRunner {
     private final Metrics metrics;
 
     private Destination destination;
-    private Source source;
+    private List<Source> sourceList;
     private DtsContext context;
 
-    private DtsMessagePipeline sourceMessagePipeline;
-    private DtsMessagePipeline destinationMessagePipeline;
 
     private int topicPartitionNum;
 
-    public DtsIntegrationRunner(Settings settings, Metrics metrics, Destination destination, Source source, DtsContext context) {
+    public DtsIntegrationRunner(Settings settings, Metrics metrics, Destination destination, List<Source> sourceList, DtsContext context) {
         this.settings = settings;
         this.metrics = metrics;
         this.etlInstance = new ETLInstance(settings);
         this.destination = destination;
-        this.source = source;
+        this.sourceList = sourceList;
         this.context = context;
 
         this.topicPartitionNum = GlobalSettings.DTS_DELIVER_TOPIC_PARTITION_NUM.getValue(settings);
@@ -62,14 +58,12 @@ public class DtsIntegrationRunner {
 
         this.recordStore = taskSubmitter.getRecordStore().orElseGet(() -> new MemoryRecordStore(metrics, context));
 
-        this.sourceMessagePipeline = buildSourceMessagePipeline();
-        this.destinationMessagePipeline = buildDestinationMessagePipeline();
     }
 
-    private DtsMessagePipeline buildSourceMessagePipeline() {
+    private DtsMessagePipeline buildSourceMessagePipeline(Source source) {
         DtsMessagePipeline rs = null;
 
-        List<DtsMessageInterceptor> interceptors = source.recordInterceptors();
+        List<DtsMessageInterceptor> interceptors = source.recordInterceptors(metrics);
 
         if (!interceptors.isEmpty()) {
             rs = new DtsMessagePipeline(interceptors);
@@ -78,11 +72,10 @@ public class DtsIntegrationRunner {
         return rs;
     }
 
-
-    private DtsMessagePipeline buildDestinationMessagePipeline() {
+    private DtsMessagePipeline buildDestinationMessagePipeline(Destination destination) {
         DtsMessagePipeline rs = null;
 
-        List<DtsMessageInterceptor> interceptors = destination.recordInterceptors();
+        List<DtsMessageInterceptor> interceptors = destination.recordInterceptors(metrics);
 
         if (!interceptors.isEmpty()) {
             rs = new DtsMessagePipeline(interceptors);
@@ -93,9 +86,14 @@ public class DtsIntegrationRunner {
 
     public void start() {
 
-        for (int i = 0; i < topicPartitionNum; i++) {
+        LOGGER.info("start source and dest task");
+        for(Source source : sourceList) {
+            DtsMessagePipeline sourceMessagePipeline = buildSourceMessagePipeline(source);
+            taskSubmitter.submitSourceTask(recordStore, source, sourceMessagePipeline);
+        }
 
-            taskSubmitter.submitSourceTask(recordStore, source, sourceMessagePipeline, i);
+        for (int i = 0; i < topicPartitionNum; i++) {
+            DtsMessagePipeline destinationMessagePipeline = buildDestinationMessagePipeline(destination);
 
             taskSubmitter.submitSinkTask(recordStore, destination, destinationMessagePipeline, i);
         }

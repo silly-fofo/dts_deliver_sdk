@@ -4,8 +4,6 @@ import com.aliyun.dts.deliver.DtsContext;
 import com.aliyun.dts.deliver.commons.config.Settings;
 import com.aliyun.dts.deliver.commons.functional.SwallowException;
 import com.aliyun.dts.deliver.protocol.generated.DtsMessage;
-import com.aliyun.dts.deliver.protocol.generated.DtsRecordMessage;
-import com.aliyun.dts.deliver.protocol.record.OperationType;
 import com.aliyun.dts.deliver.store.AbstractRecordStoreWithMetrics;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.common.metrics.Metrics;

@@ -5,11 +5,17 @@
     <parent>
         <artifactId>dts-deliver-sdk</artifactId>
         <groupId>com.aliyun.dts.deliver</groupId>
-        <version>1.0.0</version>
+        <version>${revision}</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dts-deliver-filter</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>com.aliyun.dts.deliver</groupId>
+            <artifactId>dts-deliver-api</artifactId>
+        </dependency>
+    </dependencies>
 
 
 </project>

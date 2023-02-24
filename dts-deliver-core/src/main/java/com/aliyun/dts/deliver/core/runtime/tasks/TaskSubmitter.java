@@ -59,8 +59,8 @@ public class TaskSubmitter {
         return task;
     }
 
-    public void submitSourceTask(AbstractRecordStoreWithMetrics recordStore, Source source, DtsMessagePipeline messagePipeline, int groupKey) {
-        SourceTask task = new SourceTask(this.settings, source, recordStore, messagePipeline, groupKey);
+    public void submitSourceTask(AbstractRecordStoreWithMetrics recordStore, Source source, DtsMessagePipeline messagePipeline) {
+        SourceTask task = new SourceTask(this.settings, source, recordStore, messagePipeline);
         task.setContext(context);
         submitNormalTask(task);
     }

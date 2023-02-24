@@ -5,7 +5,6 @@ import com.aliyun.dts.deliver.connector.desination.internal.DStoreRecordBuilder;
 import com.aliyun.dts.deliver.connector.desination.internal.ProducerRecordWrapper;
 import com.aliyun.dts.deliver.protocol.generated.ConfiguredDtsCatalog;
 import com.aliyun.dts.deliver.protocol.generated.DtsMessage;
-import com.aliyun.dts.deliver.protocol.generated.DtsRecordMessage;
 import com.aliyun.dts.deliver.protocol.record.OperationType;
 import com.aliyun.dts.deliver.protocol.record.Record;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -128,9 +127,8 @@ public class DStoreRecordConsumer extends FailureTrackingDtsMessageConsumer {
             if (dtsMessage.getType() == DtsMessage.Type.STATE) {
                 outputRecordCollector.accept(dtsMessage);
             } else if (dtsMessage.getType() == DtsMessage.Type.RECORD) {
-                final DtsRecordMessage recordMessage = dtsMessage.getRecord();
 
-                Record record = recordMessage.getData();
+                Record record = dtsMessage.getRecord();
                 if (OperationType.EOF != record.getOperationType()) {
                     write(record);
                 }

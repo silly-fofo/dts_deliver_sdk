@@ -61,4 +61,17 @@ public class RecordTools {
         return src.toString().equals(dest.toString());
     }
 
+    public static String getDBName(Record record) {
+        return record.getSchema().getDatabaseName().orElse(null);
+    }
+
+    public static String getSchemaName(Record record) {
+        return record.getSchema().getSchemaName().orElse(null);
+    }
+
+    public static String getTableName(Record record) {
+        return record.getSchema().getTableName().orElse(null);
+    }
+
+
 }

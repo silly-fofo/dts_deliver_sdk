@@ -25,7 +25,6 @@
         <module>dts-deliver-connectors</module>
         <module>dts-deliver-filter</module>
         <module>dts-deliver-core</module>
-        <module>dts-deliver-sink</module>
         <module>dts-deliver-framework</module>
         <module>dts-deliver-test</module>
     </modules>
