@@ -1,7 +1,7 @@
 package com.aliyun.dts.deliver.commons.etl.filter;
 
-import com.alibaba.amp.any.common.exception.CriticalDtsException;
-import com.alibaba.amp.any.common.exception.ErrorCode;
+import com.aliyun.dts.deliver.commons.exceptions.CriticalDtsException;
+import com.aliyun.dts.deliver.commons.exceptions.ErrorCode;
 
 import java.util.List;
 
