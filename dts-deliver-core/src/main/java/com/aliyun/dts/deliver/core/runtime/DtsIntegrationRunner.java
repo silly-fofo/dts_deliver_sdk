@@ -1,0 +1,103 @@
+package com.aliyun.dts.deliver.core.runtime;
+
+import com.aliyun.dts.deliver.DtsContext;
+import com.aliyun.dts.deliver.DtsMessageInterceptor;
+import com.aliyun.dts.deliver.base.Destination;
+import com.aliyun.dts.deliver.base.Source;
+import com.aliyun.dts.deliver.commons.config.GlobalSettings;
+import com.aliyun.dts.deliver.commons.config.Settings;
+import com.aliyun.dts.deliver.commons.etl.ETLInstance;
+import com.aliyun.dts.deliver.core.runtime.pipeline.DtsMessagePipeline;
+import com.aliyun.dts.deliver.core.runtime.tasks.SinkTask;
+import com.aliyun.dts.deliver.core.runtime.tasks.SourceTask;
+import com.aliyun.dts.deliver.core.runtime.tasks.TaskManager;
+import com.aliyun.dts.deliver.core.runtime.tasks.TaskSubmitter;
+import com.aliyun.dts.deliver.store.AbstractRecordStoreWithMetrics;
+import com.aliyun.dts.deliver.store.memory.MemoryRecordStore;
+import org.apache.kafka.common.metrics.Metrics;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+
+public class DtsIntegrationRunner {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DtsIntegrationRunner.class);
+
+    private final Settings settings;
+
+    private final ETLInstance etlInstance;
+
+    private final TaskSubmitter taskSubmitter;
+
+    private TaskManager<SourceTask> sourceTaskManager;
+    private TaskManager<SinkTask> sinkTaskManager;
+    private AbstractRecordStoreWithMetrics recordStore;
+
+    private AtomicReference<Throwable> errorRef;
+
+    private final Metrics metrics;
+
+    private Destination destination;
+    private Source source;
+    private DtsContext context;
+
+    private DtsMessagePipeline sourceMessagePipeline;
+    private DtsMessagePipeline destinationMessagePipeline;
+
+    private int topicPartitionNum;
+
+    public DtsIntegrationRunner(Settings settings, Metrics metrics, Destination destination, Source source, DtsContext context) {
+        this.settings = settings;
+        this.metrics = metrics;
+        this.etlInstance = new ETLInstance(settings);
+        this.destination = destination;
+        this.source = source;
+        this.context = context;
+
+        this.topicPartitionNum = GlobalSettings.DTS_DELIVER_TOPIC_PARTITION_NUM.getValue(settings);
+
+        taskSubmitter = new TaskSubmitter(etlInstance, settings, metrics, context);
+
+        this.recordStore = taskSubmitter.getRecordStore().orElseGet(() -> new MemoryRecordStore(metrics, context));
+
+        this.sourceMessagePipeline = buildSourceMessagePipeline();
+        this.destinationMessagePipeline = buildDestinationMessagePipeline();
+    }
+
+    private DtsMessagePipeline buildSourceMessagePipeline() {
+        DtsMessagePipeline rs = null;
+
+        List<DtsMessageInterceptor> interceptors = source.recordInterceptors();
+
+        if (!interceptors.isEmpty()) {
+            rs = new DtsMessagePipeline(interceptors);
+        }
+
+        return rs;
+    }
+
+
+    private DtsMessagePipeline buildDestinationMessagePipeline() {
+        DtsMessagePipeline rs = null;
+
+        List<DtsMessageInterceptor> interceptors = destination.recordInterceptors();
+
+        if (!interceptors.isEmpty()) {
+            rs = new DtsMessagePipeline(interceptors);
+        }
+
+        return rs;
+    }
+
+    public void start() {
+
+        for (int i = 0; i < topicPartitionNum; i++) {
+
+            taskSubmitter.submitSourceTask(recordStore, source, sourceMessagePipeline, i);
+
+            taskSubmitter.submitSinkTask(recordStore, destination, destinationMessagePipeline, i);
+        }
+    }
+}

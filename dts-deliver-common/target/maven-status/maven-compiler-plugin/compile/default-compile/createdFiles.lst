@@ -1,0 +1,8 @@
+com/aliyun/dts/deliver/commons/util/MoreIterators$1.class
+com/aliyun/dts/deliver/commons/concurrency/VoidCallable.class
+com/aliyun/dts/deliver/commons/util/CompositeIterator.class
+com/aliyun/dts/deliver/commons/util/AutoCloseableIterator.class
+com/aliyun/dts/deliver/commons/util/AutoCloseableIterators.class
+com/aliyun/dts/deliver/commons/util/LazyAutoCloseableIterator.class
+com/aliyun/dts/deliver/commons/util/DefaultAutoCloseableIterator.class
+com/aliyun/dts/deliver/commons/util/MoreIterators.class
